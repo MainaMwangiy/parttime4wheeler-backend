@@ -45,8 +45,8 @@ To create a new blog
     "writter": {
         "joined": "08 Apr 2021",
         "_id": "606efbba17e43a04cce0286d",
-        "first_name": "Tazbinur",
-        "last_name": "Rahaman"
+        "first_name": "Charles",
+        "last_name": "Mwangi"
     },
     "comments": [],
     "__v": 0

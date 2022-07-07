@@ -25,7 +25,8 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        default: 'blogger'
+        default: 'reader',
+        enum: ['reader', 'admin']
     },
     job: {
         type: String,

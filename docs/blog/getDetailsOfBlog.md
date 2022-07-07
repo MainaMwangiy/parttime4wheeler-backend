@@ -45,8 +45,8 @@ To get detailed content of a particular blog
     "writter": {
         "joined": "07 May 2021",
         "_id": "6094fafc8c2e3c15b4d3cb9d",
-        "first_name": "Tazbinur",
-        "last_name": "Rahaman"
+        "first_name": "Charles",
+        "last_name": "Mwangi"
     },
     "comments": [
         {

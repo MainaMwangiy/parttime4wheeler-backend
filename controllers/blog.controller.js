@@ -9,17 +9,36 @@ const itemsPerPage = 6;
 
 const createBlog = async(req, res, next) => {
     try {
-        
         let blogBody = req.body;
-
         if( req.file ) {
             blogBody.img = req.file.path;
         }
-
         blogBody.writter = req.body.userId;
 
         const savedblog = await blogService.createBlog(blogBody)
         res.send(savedblog);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+const editBlog = async(req, res, next) => {
+    try {
+        let blogBody = req.body;
+        if( req.file ) {
+            blogBody.img = req.file.path;
+        }
+        const oldImage = await blogService.findUniqueBlog({_id: blogBody.blogId});
+        
+        await blogService.updateBlog(blogBody);
+        
+        const updatedBlog = await blogService.findUniqueBlog({_id: blogBody.blogId}, ['_id', 'title', 'body']);
+        
+        if (req.file && fs.existsSync(oldImage.img) && !oldImage.img.includes('default')) {
+            await fs.unlinkSync(oldImage.img);
+          }
+        res.send(updatedBlog);
 
     } catch (error) {
         next(error);
@@ -132,6 +151,29 @@ const commentToBlog = async(req, res, next) => {
     }
 }
 
+const deleteBlog = async(req, res, next) => {
+    try {
+
+        const blogBody = req.body;
+        const searchParams = { _id: blogBody.blogId };
+        const selectFields = '';
+
+        let blog = await blogService.readBlogs(searchParams, selectFields);
+        if( blog.length == 0 ) {
+            throw createErrors.NotFound('This blog does not exists');
+        }
+        blog = blog[0];
+
+        const updatedBlog = await blogService.deleteBlog(blog, blogBody);
+        res.send(updatedBlog);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
 const deleteComment = async(req, res, next) => {
     try {
 
@@ -156,9 +198,11 @@ const deleteComment = async(req, res, next) => {
  // exports
  module.exports = {
     createBlog,
+    editBlog,
     getBlogList,
     getSingleBlog,
     reactToBlog,
     commentToBlog,
+    deleteBlog,
     deleteComment
  }

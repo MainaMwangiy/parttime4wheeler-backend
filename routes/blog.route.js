@@ -2,6 +2,8 @@
 const express = require('express');
 const createErrors = require('http-errors');
 const blogCtrl = require('../controllers/blog.controller');
+// const authorize = require('../helpers/authorize');
+// const Role = require('../helpers/role.js')
 
 const {
     verifyAccessToken
@@ -51,7 +53,12 @@ const router = express.Router();
 // route: blog/
 
 router.post('/', verifyAccessToken, upload.single('img'), verifyAccessToken, blogCtrl.createBlog);
-router.get('/details/:blogId', blogCtrl.getSingleBlog);
+router.put('/editBlog', 
+    verifyAccessToken, 
+    upload.single('img'),
+    verifyAccessToken, 
+    blogCtrl.editBlog);
+router.get('/details/:blogId',blogCtrl.getSingleBlog);
 router.get('/:bloggerId?/:categoryId?', blogCtrl.getBlogList);
 router.put('/react', verifyAccessToken, blogCtrl.reactToBlog);
 router.post('/comment', verifyAccessToken, blogCtrl.commentToBlog);

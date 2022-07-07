@@ -33,7 +33,7 @@ To update/edit a registered user's information
 {
     "role": "blogger",
     "_id": "606efbba17e43a04cce0286d",
-    "first_name": "Tazbinur"
+    "first_name": "Charles"
 }
 ```
 

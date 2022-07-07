@@ -24,6 +24,41 @@ const { Blog } = require('../models/blog.model');
     }
 }
 
+const findUniqueBlog = async(searchParams, selectFields = '') => {
+    try {
+        
+        const blogResult = await Blog
+        .findOne(searchParams)
+        .select(selectFields);
+        if( !blogResult ) {
+            throw createErrors.NotFound('Incorrect information');
+        }
+
+        return Promise.resolve(blogResult);
+
+    } catch (error) {
+        if( error.name == 'CastError' ) {
+            error = createErrors.BadRequest('Invalid bloggerId')
+        }
+        return Promise.reject(error);
+    }
+}
+
+
+const updateBlog = async(blogBody) => {
+    try {
+        
+        const blogId = blogBody.blogId;
+        const updateBody = utils.makeObjectExcept(blogBody, ['blogId']);
+        const updatedBlog = await Blog.updateOne({ _id: blogId }, updateBody);
+
+        return Promise.resolve(updatedBlog);
+
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 const readBlogs = async(
     searchParams = {}, 
     selectFields = '', 
@@ -117,6 +152,25 @@ const postComment = async(blog, commentBody) => {
     }
 }
 
+const deleteBlog = async(blog, blogBody) => {
+    try {
+
+        blog.blogs = blog.blogs.filter(c => {
+            if( c._id == blogBody.id && c.people._id == blogBody.userId ) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        const updatedBlog = await blog.save();
+        return Promise.resolve(updatedBlog);
+
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 const deleteComment = async(blog, commentBody) => {
     try {
 
@@ -139,9 +193,12 @@ const deleteComment = async(blog, commentBody) => {
 // exports
 module.exports = {
     createBlog,
+    findUniqueBlog,
+    updateBlog,
     readBlogs,
     countBlogs,
     reactBlog,
     postComment,
+    deleteBlog,
     deleteComment
 }
